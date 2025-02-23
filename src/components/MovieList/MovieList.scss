@@ -1,0 +1,23 @@
+
+.pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.movie-list-container {
+  margin: 0 auto;
+  padding: 20px;
+}
+
+@media (max-width: 420px) {
+
+  .ant-row {
+    justify-content: start;
+  }
+
+  .ant-input-affix-wrapper {
+    width: 90%;
+    margin-left: 20px;
+  }
+
+}
