@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Tabs, Alert } from "antd";
 import MovieList from "../MovieList/MovieList";
-import SearchBar from "../SearchBar/SearchBar";
+import SearchBar from "../Searchbar/Searchbar";
 import { MoviesContext } from "../../contexts/MoviesContext";
 import { fetchMovies } from "../../api/api";
 import "./App.scss";
