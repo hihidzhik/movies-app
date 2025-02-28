@@ -18,22 +18,13 @@ const MovieCard = ({ movie }) => {
     const initialRating = ratedMovies.find((m) => m.id === movie.id)?.rating || 0;
     const [userRating, setUserRating] = useState(initialRating);
     const [loading, setLoading] = useState(true);
-    const [isPlaceholder, setIsPlaceholder] = useState(false);
 
     useEffect(() => {
         setUserRating(initialRating);
     }, [ratedMovies, initialRating]);
 
-    const placeholderUrl = "https://via.placeholder.com/183x279?text=No+Image";
+    const placeholderUrl = "https://placehold.co/183x279?text=No+image";
     const imageUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}` : placeholderUrl;
-
-    const handleImageError = (e) => {
-        if (!isPlaceholder) {
-            setIsPlaceholder(true);
-            e.target.src = placeholderUrl;
-        }
-        setLoading(false);
-    };
 
     const handleRate = async (value) => {
         if (!sessionId) return;
@@ -58,23 +49,22 @@ const MovieCard = ({ movie }) => {
             className="movie-card"
             cover={
                 <div className="movie-card__image-container">
-                    {loading && <Spin className="spinner" size="large" />}
+                    {loading && <Spin className="spinner" size="large"/>}
                     <img
                         src={imageUrl}
                         alt={movie.title}
-                        className={`movie-card__img ${loading ? "hidden" : ""}`}
+                        className="movie-card__img"
                         onLoad={() => setLoading(false)}
-                        onError={handleImageError}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://placehold.co/183x279?text=No+image";
+                            setLoading(false);
+                        }}
                     />
-                    {!movie.poster_path && (
-                        <div className="movie-card__no-image">
-                            <p>Нет изображения</p>
-                        </div>
-                    )}
                 </div>
             }
         >
-            <RatingCircle rating={movie.vote_average} />
+            <RatingCircle rating={movie.vote_average}/>
 
             <Meta
                 title={<div className="movie-card__title">{movie.title}</div>}
