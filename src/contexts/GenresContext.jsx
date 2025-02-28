@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-export const GenresContext = createContext();
+const GenresContext = createContext();
 
 const GenresProvider = ({ children }) => {
     const [genres, setGenres] = useState([]);
@@ -32,4 +32,4 @@ GenresProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export { GenresProvider };
+export { GenresContext, GenresProvider };

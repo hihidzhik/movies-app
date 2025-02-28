@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Card, Rate, Spin, Tag } from "antd";
 import { format } from "date-fns";
@@ -20,6 +20,10 @@ const MovieCard = ({ movie }) => {
     const [loading, setLoading] = useState(true);
     const [isPlaceholder, setIsPlaceholder] = useState(false);
 
+    useEffect(() => {
+        setUserRating(initialRating);
+    }, [ratedMovies, initialRating]);
+
     const placeholderUrl = "https://via.placeholder.com/183x279?text=No+Image";
     const imageUrl = movie.poster_path ? `https://image.tmdb.org/t/p/w500/${movie.poster_path}` : placeholderUrl;
 
@@ -37,21 +41,15 @@ const MovieCard = ({ movie }) => {
         if (value === 0) {
             await deleteRating(movie.id, sessionId);
             setRatedMovies((prev) => prev.filter((m) => m.id !== movie.id));
-            setMovies((prev) =>
-                prev.map((m) => (m.id === movie.id ? { ...m, rating: 0 } : m))
-            );
         } else {
             await rateMovie(movie.id, value, sessionId);
-            setUserRating(value);
-            setRatedMovies((prev) =>
-                prev.some((m) => m.id === movie.id)
-                    ? prev.map((m) => (m.id === movie.id ? { ...m, rating: value } : m))
-                    : [...prev, { ...movie, rating: value }]
-            );
-            setMovies((prev) =>
-                prev.map((m) => (m.id === movie.id ? { ...m, rating: value } : m))
-            );
+            setRatedMovies((prev) => [...prev.filter((m) => m.id !== movie.id), { ...movie, rating: value }]);
         }
+
+        setUserRating(value);
+        setMovies((prev) =>
+            prev.map((m) => (m.id === movie.id ? { ...m, rating: value } : m))
+        );
     };
 
     return (
@@ -63,7 +61,7 @@ const MovieCard = ({ movie }) => {
                     {loading && <Spin className="spinner" size="large" />}
                     <img
                         src={imageUrl}
-                        alt=""
+                        alt={movie.title}
                         className={`movie-card__img ${loading ? "hidden" : ""}`}
                         onLoad={() => setLoading(false)}
                         onError={handleImageError}

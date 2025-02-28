@@ -50,16 +50,18 @@ export const rateMovie = async (movieId, rating, sessionId) => {
 
 export const fetchRatedMovies = async (sessionId) => {
     if (!sessionId) return [];
+
+    const url = `${BASE_URL}/guest_session/${sessionId}/rated/movies?api_key=${API_KEY}&language=en-US`;
+
     try {
-        const response = await fetch(
-            `${BASE_URL}/guest_session/${sessionId}/rated/movies?api_key=${API_KEY}&language=en-US`
-        );
-        if (!response.ok) throw new Error("Ошибка загрузки оцененных фильмов");
+        const response = await fetch(url);
+        if (response.status === 404) return [];
+        if (!response.ok) throw new Error(`Ошибка загрузки оценённых фильмов (Статус: ${response.status})`);
 
         const data = await response.json();
         return data.results || [];
     } catch (error) {
-        console.error("Ошибка в fetchRatedMovies:", error);
+        console.error("Ошибка в fetchRatedMovies:", error.message);
         return [];
     }
 };

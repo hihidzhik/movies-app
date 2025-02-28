@@ -67,9 +67,10 @@ const MovieList = ({ movies, currentPage, totalPages, onPageChange }) => {
 
 MovieList.propTypes = {
     movies: PropTypes.array.isRequired,
-    currentPage: PropTypes.number.isRequired,
-    totalPages: PropTypes.number.isRequired,
-    onPageChange: PropTypes.func.isRequired,
+    sessionId: PropTypes.string,
+    currentPage: PropTypes.number,
+    totalPages: PropTypes.number,
+    onPageChange: PropTypes.func,
 };
 
 export default MovieList;

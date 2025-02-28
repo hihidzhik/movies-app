@@ -1,13 +1,16 @@
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
 import 'antd/dist/reset.css';
-import App from './components/App/App'
-import { MoviesProvider } from "./contexts/MoviesContext.jsx";
+import App from './components/App/App';
+import { MoviesProvider } from "./contexts/MoviesContext";
 import { GenresProvider } from "./contexts/GenresContext";
 
 createRoot(document.getElementById('root')).render(
-    <GenresProvider>
-    <MoviesProvider>
-        <App />
-    </MoviesProvider>
-    </GenresProvider>
-)
+    <StrictMode>
+        <GenresProvider>
+            <MoviesProvider>
+                <App />
+            </MoviesProvider>
+        </GenresProvider>
+    </StrictMode>
+);

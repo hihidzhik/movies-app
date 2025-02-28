@@ -1,8 +1,9 @@
-import { createContext, useState, useEffect } from "react";
+import {useState, useEffect } from "react";
+import {createContext} from "react";
 import PropTypes from "prop-types";
 import { fetchMovies as fetchMoviesAPI, fetchRatedMovies, createGuestSession } from "../api/api";
 
-export const MoviesContext = createContext();
+const MoviesContext = createContext();
 
 const MoviesProvider = ({ children }) => {
     const getSessionId = () => {
@@ -38,22 +39,12 @@ const MoviesProvider = ({ children }) => {
 
     useEffect(() => {
         const initSession = async () => {
-            if (sessionId) {
-                try {
-                    const rated = await fetchRatedMovies(sessionId);
-                    setRatedMovies(rated);
-                } catch (err) {
-                    console.error("Ошибка загрузки оцененных фильмов:", err);
-                    setError("Ошибка загрузки оцененных фильмов.");
-                }
-            } else {
+            if (!sessionId) {
                 try {
                     const newSession = await createGuestSession();
                     if (newSession) {
                         localStorage.setItem("sessionId", newSession);
                         setSessionId(newSession);
-                        const rated = await fetchRatedMovies(newSession);
-                        setRatedMovies(rated);
                     }
                 } catch (err) {
                     console.error("Ошибка создания гостевой сессии:", err);
@@ -70,21 +61,16 @@ const MoviesProvider = ({ children }) => {
         }
     }, [ratedMovies]);
 
-    useEffect(() => {
-        const updateRatedMovies = async () => {
-            if (!sessionId) return;
-
-            try {
-                const rated = await fetchRatedMovies(sessionId);
-                setRatedMovies((prev) => (JSON.stringify(prev) !== JSON.stringify(rated) ? rated : prev));
-            } catch (err) {
-                console.error("Ошибка загрузки оцененных фильмов:", err);
-                setError("Ошибка загрузки оцененных фильмов.");
-            }
-        };
-
-        updateRatedMovies();
-    }, [sessionId]);
+    const loadRatedMovies = async () => {
+        if (!sessionId) return;
+        try {
+            const rated = await fetchRatedMovies(sessionId);
+            setRatedMovies(rated);
+        } catch (err) {
+            console.error("Ошибка загрузки оцененных фильмов:", err);
+            setError("Ошибка загрузки оцененных фильмов.");
+        }
+    };
 
     return (
         <MoviesContext.Provider
@@ -100,6 +86,7 @@ const MoviesProvider = ({ children }) => {
                 fetchMovies,
                 error,
                 setError,
+                loadRatedMovies,
             }}
         >
             {children}
@@ -111,4 +98,4 @@ MoviesProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-export { MoviesProvider };
+export { MoviesContext, MoviesProvider };
